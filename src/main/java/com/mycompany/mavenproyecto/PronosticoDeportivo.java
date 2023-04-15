@@ -10,7 +10,7 @@ public class PronosticoDeportivo {
 
     public void play(){
         // cargar y listar los equipos
-        equipos.cargarDeArchivo();
+        equipos.cargaDeDB();
         System.out.println("Los equipos cargados son: " + equipos.listar());
         
         System.out.println ("Buscando el equipo");

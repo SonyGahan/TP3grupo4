@@ -1,10 +1,12 @@
 package com.mycompany.mavenproyecto;
 
-import java.io.File;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class ListaParticipantes {
@@ -97,47 +99,63 @@ public class ListaParticipantes {
     }
     
     // cargar desde el archivo
-    public void cargarDeArchivo() {
+    public void cargaDeDB() {
+        
         // para las lineas del archivo csv
         String datosParticipante;
         // para los datos individuales de cada linea
         String vectorParticipante[];
         // para el objeto en memoria
         Participante participante;
+        /*
         int fila = 0;
+ 
+        System.out.print("seccion carga de equipos");
+         */
+        
+        Connection com=null;
+       
        
         try { 
-            Scanner sc = new Scanner(new File(this.getParticipantesCSV()));
-            sc.useDelimiter("\n");   //setea el separador de los datos
+            //Establecer la conexion
+            com = DriverManager.getConnection("jdbc:sqlite:pronosticos.db" );
+            Statement stmt = com.createStatement();
+            
+            //String sql;
+            String sql =  "Select * from participantes";
+            ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
+            
+            System.out.println ("conectado GRUPO 4");    
+            while (rs.next()) {
+                        System.out.println(rs.getInt("idParticipante") + "\t"
+                        + rs.getString("Nombre") + "\t \t \t"
+                        + rs.getString("Descripcion") + "\t");
                 
-            while (sc.hasNext()) {
-                // levanta los datos de cada linea
-                datosParticipante = sc.next();
-                // Descomentar si se quiere mostrar cada li­nea lei­da desde el archivo
-                // System.out.println(datosParticipante);  //muestra los datos levantados 
-                fila ++;
-                // si es la cabecera la descarto y no se considera para armar el listado
-                if (fila == 1)
-                    continue;              
-                 
-                //Proceso auxiliar para convertir los string en vector
-                // guarda en un vector los elementos individuales 
-                vectorParticipante = datosParticipante.split(",");   
+           
+                        
+                int idParticipante = rs.getInt("idParticipante") ;
+                String nombre = rs.getString("Nombre");
+                String descripcion = rs.getString("Descripcion");
                 
-                // graba el participante en memoria - HAY PROBLEMAS PARA ALMACENAR LOS DATOS EN EL VECTOR!
-                //convertir un string a un entero;
-                int idParticipante = Integer.parseInt(vectorParticipante[0]);
-                String nombre = vectorParticipante[1];
-                int puntaje = Integer.parseInt(vectorParticipante[2]);
                 // crea el objeto en memoria
                 participante = new Participante(idParticipante, nombre, puntaje);
                 
                 // llama al metodo add para grabar el equipo en la lista en memoria
                 this.addParticipante(participante);
+
             }
-            //close the scanner
-        } catch (IOException ex) {
-                System.out.println("Mensaje: " + ex.getMessage());
+            //closes the scanner
+        } catch (SQLException e) {
+                System.out.println("Mensaje: " + e.getMessage());
+        } finally {
+            try {
+                if (com != null) {
+                    com.close();
+                }
+            } catch (SQLException e) {
+                // conn close failed.
+                System.out.println(e.getMessage());
+            }
         }       
-    }  
+    }    
 }

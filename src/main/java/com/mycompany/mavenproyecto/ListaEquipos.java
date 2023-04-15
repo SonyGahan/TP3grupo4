@@ -1,15 +1,19 @@
 package com.mycompany.mavenproyecto;
 
-import java.io.File;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class ListaEquipos {
-    //Atributos
+    
+    // atributo
     private List<Equipo> equipos;
     private String equiposCSV;
+
     
     //Metodos
     
@@ -18,12 +22,12 @@ public class ListaEquipos {
         this.equipos = equipos;
         this.equiposCSV = equiposCSV;
     }
-    
+
     public ListaEquipos() {
         this.equipos = new ArrayList<Equipo>();
         this.equiposCSV = "equipos.csv";
     }
-    
+
     
     //Getters and Setters
     public List<Equipo> getEquipos() {
@@ -41,6 +45,7 @@ public class ListaEquipos {
     public void setEquiposCSV(String equiposCSV) {
         this.equiposCSV = equiposCSV;
     }
+
     
     // add y remove elementos
     public void addEquipo(Equipo e) {
@@ -48,19 +53,19 @@ public class ListaEquipos {
     }
     public void removeEquipo(Equipo e) {
         this.equipos.remove(e);
-    }
+    }  
     
     /***
-     * Este metodo devuelve un objeto Equipo (o null) buscandolo por idEquipo
+     * Este mÃ©todo devuelve un Equipo (o null) buscandolo por idEquipo
      * @param idEquipo Identificador del equipo deseado
      * @return Objeto Equipo (o null si no se encuentra)
      */
     public Equipo getEquipo (int idEquipo) {
-        // Defini un objeto de tipo Equipo en donde va a ir mi resultado
+        // Defini un objeto de tipo Equipo en dÃ³nde va a ir mi resultado
         // Inicialmente es null, ya que no he encontrado el equipo que 
-        // buscaba todavi­a.
+        // buscaba todavÃ­a.
         Equipo encontrado = null;
-        // Recorro la lista de equipos que esta¡ cargada
+        // Recorro la lista de equipos que estÃ¡ cargada
         for (Equipo eq : this.getEquipos()) {
             // Para cada equipo obtengo el valor del ID y lo comparo con el que
             // estoy buscando
@@ -72,18 +77,17 @@ public class ListaEquipos {
             }
         }
         // Una vez fuera del ciclo retorno el equipo, pueden pasar dos cosas:
-        // 1- Lo encontro en el ciclo, entonces encontrado tiene el objeto encontrado
-        // 2- No lo encontro en el ciclo, entonces conserva el valor null del principio
+        // 1- Lo encontrÃ© en el ciclo, entonces encontrado tiene el objeto encontrado
+        // 2- No lo encontrÃ© en el ciclo, entonces conserva el valor null del principio
         return encontrado;
     }
-    
-    //ToString - revisar
+
+    //ToString
     @Override
     public String toString() {
-        return "ListaEquipos{" + "equipos=" + equipos + ", equiposCSV=" + equiposCSV + '}';
+        return "ListaEquipos{" + "equipos=" + equipos + '}';
     }
-    
-    
+
     public String listar() {
         String lista = "";
         for (Equipo equipo: equipos) {
@@ -92,48 +96,53 @@ public class ListaEquipos {
         return lista;
     }
     
-    // cargar desde el archivo
-    public void cargarDeArchivo() {
-        // para las lineas del archivo csv
-        String datosEquipo;
-        // para los datos individuales de cada linea
-        String vectorEquipo[];
-        // para el objeto en memoria
-        Equipo equipo;
-        int fila = 0;
-       
+    // cargar desde la Base de Datos
+    public void cargaDeDB()
+    {
+        
+        
+        Connection com=null;
         try { 
-            Scanner sc = new Scanner(new File(this.getEquiposCSV()));
-            sc.useDelimiter("\n");   //setea el separador de los datos
+            //Establecer la conexion
+            com = DriverManager.getConnection("jdbc:sqlite:pronosticos.db" );
+            Statement stmt = com.createStatement();
+            
+            //String sql;
+            String sql =  "Select";
+            ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
+            
+            
+            System.out.println ("conectado GRUPO 4");    
+            while (rs.next()) {
+                //Obtener los objetos que necesito para el constructor
+                System.out.println(rs.getInt("idEquipo") + "\t"
+                + rs.getString("Nombre") + "\t \t \t"
+                + rs.getString("Descripcion") + "\t");
                 
-            while (sc.hasNext()) {
-                // levanta los datos de cada linea
-                datosEquipo = sc.next();
-                // Descomentar si se quiere mostrar cada lÃ­nea leÃ­da desde el archivo
-                // System.out.println(datosEquipo);  //muestra los datos levantados 
-                fila ++;
-                // si es la cabecera la descarto y no se considera para armar el listado
-                if (fila == 1)
-                    continue;              
-                 
-                //Proceso auxiliar para convertir los string en vector
-                // guarda en un vector los elementos individuales
-                vectorEquipo = datosEquipo.split(",");   
+           
+                int idEquipo = rs.getInt("idEquipo") ;
+                String nombre = rs.getString("Nombre");
+                String descripcion = rs.getString("Descripcion");
                 
-                // graba el equipo en memoria
-                //convertir un string a un entero;
-                int idEquipo = Integer.parseInt(vectorEquipo[0]);
-                String nombre = vectorEquipo[1];
-                String descripcion = vectorEquipo[2];
                 // crea el objeto en memoria
-                equipo = new Equipo(idEquipo, nombre, descripcion);
+                Equipo equipo = new Equipo(idEquipo, nombre, descripcion);
                 
                 // llama al metodo add para grabar el equipo en la lista en memoria
                 this.addEquipo(equipo);
+
             }
             //closes the scanner
-        } catch (IOException ex) {
-                System.out.println("Mensaje: " + ex.getMessage());
+        } catch (SQLException e) {
+                System.out.println("Mensaje: " + e.getMessage());
+        } finally {
+            try {
+                if (com != null) {
+                    com.close();
+                }
+            } catch (SQLException e) {
+                // conn close failed.
+                System.out.println(e.getMessage());
+            }
         }       
-    }   
+    }    
 }

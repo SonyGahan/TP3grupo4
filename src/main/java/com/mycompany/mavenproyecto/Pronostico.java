@@ -1,4 +1,3 @@
-
 package com.mycompany.mavenproyecto;
 
 
@@ -8,21 +7,12 @@ public class Pronostico {
     private Equipo equipo;
     private Partido partido;
     private char resultado;
-    private Integer idParticipante;
    
     
     //Metodos
     
     //Constructor
 
-    public Pronostico(int idPronostico, Equipo equipo, Partido partido, char resultado, Integer idParticipante) {
-        this.idPronostico = idPronostico;
-        this.equipo = equipo;
-        this.partido = partido;
-        this.resultado = resultado;
-        this.idParticipante = idParticipante;
-    }
-    
     public Pronostico(int idPronostico, Equipo equipo, Partido partido, char resultado) {
         this.idPronostico = idPronostico;
         this.equipo = equipo;
@@ -35,7 +25,6 @@ public class Pronostico {
         this.equipo = null;
         this.partido = null;
         this.resultado = '\0';
-        this.idParticipante = null;
     }
     
     
@@ -71,15 +60,14 @@ public class Pronostico {
     public void setResultado(char resultado) {
         this.resultado = resultado;
     }
+    
+    //ToString
 
-    public Integer getIdParticipante() {
-        return idParticipante;
+    @Override
+    public String toString() {
+        return "Pronostico{" + "idPronostico=" + idPronostico + ", equipo=" + equipo + ", partido=" + partido + ", resultado=" + resultado + '}';
     }
-
-    public void setIdParticipante(Integer idParticipante) {
-        this.idParticipante = idParticipante;
-    }
-
+    
     
     
     // Metodo que devuelve 0 o 1 segun haya coincidencia o no, entre el resultado apostado y el resultado real del partido
@@ -97,11 +85,4 @@ public class Pronostico {
             puntaje = 0;
     }
     
-    
-    
-    //ToString
-    @Override
-    public String toString() {
-        return "Pronostico{" + "idPronostico=" + idPronostico + ", equipo=" + equipo + ", partido=" + partido + ", resultado=" + resultado + ", idParticipante=" + idParticipante + '}';
-    }
 }

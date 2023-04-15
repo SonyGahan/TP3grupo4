@@ -1,10 +1,12 @@
 package com.mycompany.mavenproyecto;
 
-import java.io.File;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class ListaPartidos {
@@ -98,63 +100,59 @@ public class ListaPartidos {
     
     
     // cargar desde el archivo
-    public void cargarDeArchivo(
-            int idPartido, // id del partido
-            ListaEquipos listaequipos // lista de equipos       
+    public void cargaDeDB(
+        int idPartido, // id del ppartido jugado
+        ListaEquipos listaequipos1, // lista de equipos1
+        ListaEquipos listaequipos2, // lista de equipos2
+        int golesEquipo1, //Goles del equipo1
+        int golesEquipo2 //Goles del equipo2
     ) {
-        // para las lineas del archivo csv
-        String datosPartido;
-        // para los datos individuales de cada linea
-        String vectorPartido[];
-        // para el objeto en memoria
-        Partido partido;
-        int fila = 0;
-       
+        
+        Connection com=null;
         try { 
-            Scanner sc = new Scanner(new File(this.getPartidosCSV()));
-            sc.useDelimiter("\n");   //setea el separador de los datos
-                
-            while (sc.hasNext()) {
-                // levanta los datos de cada linea
-                datosPartido = sc.next();
-                // Descomentar si se quiere mostrar cada li­nea lei­da desde el archivo
-                // System.out.println(datosPartido);  //muestra los datos levantados 
-                fila ++;
-                // si es la cabecera la descarto y no se considera para armar el listado
-                if (fila == 1)
-                    continue;              
-                 
-                //Proceso auxiliar para convertir los string en vector
-                // guarda en un vector los elementos individuales
-                vectorPartido = datosPartido.split(",");   
-                
-                // graba el partido en memoria
-                //convertir un string a un entero;
-                int readidPartido = Integer.parseInt(vectorPartido[0]);
-                int readidEquipo1 = Integer.parseInt(vectorPartido[1]);
-                int readidEquipo2 = Integer.parseInt(vectorPartido[2]);
-                int readgolesEquipo1 = Integer.parseInt(vectorPartido[3]);
-                int readgolesEquipo2 = Integer.parseInt(vectorPartido[4]);
-                if (readidPartido == idPartido) {
-                    // Obtener los objetos que necesito para el constructor
-                    Equipo equipo1 = listaequipos.getEquipo(readidEquipo1);
-                    Equipo equipo2 = listaequipos.getEquipo(readidEquipo2);
-                    // crea el objeto en memoria
-                    partido = new Partido(
-                            readidPartido, // El id leido del archivo
-                            equipo1, // El objeto Equipo1 que obtuvimos de la lista
-                            equipo2, // El objeto Equipo2 que obtuvimos de la lista
-                            readgolesEquipo1, // Goles del equipo1 que leimos del archivo
-                            readgolesEquipo2 // Goles del equipo2 que leimos del archivo
-                    );
-                
-                    // llama al metodo add para grabar el partido en la lista en memoria
-                    this.addPartido(partido);
-                }
+            //Establecer la conexion
+            com = DriverManager.getConnection("jdbc:sqlite:pronosticos.db" );
+            Statement stmt = com.createStatement();
+            
+            //String sql;
+            String sql =  "Select";
+                + "idPartido, idEquipo1, idEquipo2, golesEquipo1, golesEquipo2 "
+		+ "FROM partidos "
+		+ "WHERE idPartido = " + idPartido;
+            ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
+            
+            
+           
+            System.out.println ("conectado GRUPO 4");    
+            while (rs.next()) {
+                //Obtener los objetos que necesito para el constructor
+                Partido partido = listapartidos.getPartido(rs.getInt("idPartido"));
+		Equipo equipo = listaequipos1.getEquipo(rs.getInt("idEquipo"));
+		// crea el objeto en memoria
+                    Partido partido = new Partido(
+			rs.getInt("idPartido"), // El id leido de la tabla
+			listaequipos1, // El Equipo que obtuvimos de la lista
+                        listaequipos2, // El Equipo que obtuvimos de la lista    
+                        rs.getInt("golesEquipo1"), // El id leido de la tabla    
+			rs.getInt("golesEquipo2") // El id leido de la tabla    
+		);
+
+		// llama al metodo add para grabar el equipo en la lista en memoria
+                this.addPartido(partido);
+
             }
             //closes the scanner
-        } catch (IOException ex) {
-                System.out.println("Mensaje: " + ex.getMessage());
+        } catch (SQLException e) {
+                System.out.println("Mensaje: " + e.getMessage());
+        } finally {
+            try {
+                if (com != null) {
+                    com.close();
+                }
+            } catch (SQLException e) {
+                // conn close failed.
+                System.out.println(e.getMessage());
+            }
         }       
-    }
+    }  
 }

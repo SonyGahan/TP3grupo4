@@ -1,10 +1,12 @@
 package com.mycompany.mavenproyecto;
 
-import java.io.File;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 
 public class ListaPronosticos {
@@ -69,128 +71,58 @@ public class ListaPronosticos {
     }
     
     
-    // Cargar desde el archivo, filtrando solamente aquellos pronosticos
-    // cuyo idParticipante coincide con el indicado
-    // De esa forma todos los pronosticos de la lista pertenecen al mismo participante.
-    public void cargarDeArchivo(
-            int idParticipante, // id del participante que realizo el pronostico
+    // cargar desde la Base de Datos
+    public void cargaDeDB(
+            int idParticipante, // id del participante que realizó el pronóstico
             ListaEquipos listaequipos, // lista de equipos
             ListaPartidos listapartidos // lista de partidos
     ) {
-        // para las lineas del archivo csv
-        String datosPronostico;
-        // para los datos individuales de cada linea
-        String vectorPronostico[];
-
-        int fila = 0;
-
-        try {
-            Scanner sc = new Scanner(new File(this.getPronosticosCSV()));
-            sc.useDelimiter("\n");   //setea el separador de los datos
-
-            while (sc.hasNext()) {
-                // levanta los datos de cada linea
-                datosPronostico = sc.next();
-                // Descomentar si se quiere mostrar cada li­nea lei­da desde el archivo
-                // System.out.println(datosPronostico);  //muestra los datos levantados 
-                fila++;
-                // si es la cabecera la descarto y no se considera para armar el listado
-                if (fila == 1) {
-                    continue;
-                }
-
-                //Proceso auxiliar para convertir los string en vector
-                // guarda en un vector los elementos individuales
-                vectorPronostico = datosPronostico.split(",");
-
-                // graba el equipo en memoria
-                //convertir un string a un entero;
-                int readidPronostico = Integer.parseInt(vectorPronostico[0]);
-                int readidParticipante = Integer.parseInt(vectorPronostico[1]);
-                int readidPartido = Integer.parseInt(vectorPronostico[2]);
-                int readidEquipo = Integer.parseInt(vectorPronostico[3]);
-                char readResultado = vectorPronostico[4].charAt(1);     // El primer caracter es una comilla delimitadora de campo
-                // Si coincide el idParticipante con el que estoy queriendo cargar,
-                // sigo, si no, salteo el registro y voy al siguiente
-                if (readidParticipante == idParticipante) {
-                    // Obtener los objetos que necesito para el constructor
-                    Partido partido = listapartidos.getPartido(readidPartido);
-                    Equipo equipo = listaequipos.getEquipo(readidEquipo);
-                    // crea el objeto en memoria
-                    Pronostico pronostico = new Pronostico(
-                            readidPronostico, // El id leido del archivo
-                            equipo, // El Equipo que obtuvimos de la lista
-                            partido, // El Partido que obtuvimos de la lista
-                            readResultado // El resultado que leimos del archivo
-                    );
-
-                    // llama al metodo add para grabar el equipo en la lista en memoria
-                    this.addPronostico(pronostico);
-                }
-            }
-            //closes the scanner
-        } catch (IOException ex) {
-            System.out.println("Mensaje: " + ex.getMessage());
-        }
-    }
         
-    public void cargarDeArchivoTodos(
-            ListaEquipos listaequipos, // lista de equipos
-            ListaPartidos listapartidos // lista de partidos
-    ) {
-        // para las lineas del archivo csv
-        String datosPronostico;
-        // para los datos individuales de cada linea
-        String vectorPronostico[];
+        
+        Connection com=null;
+        try { 
+            //Establecer la conexion
+            com = DriverManager.getConnection("jdbc:sqlite:pronosticos.db" );
+            //Crear el "statement" para enviar comandos
+            Statement stmt = com.createStatement();
+            
+            //String sql;
+            String sql =  "Select"
+                + "idPronostico, idParticipante, idPartido, idEquipo, resultado "
+		+ "FROM pronosticos "
+		+ "WHERE idParticipante = " + idParticipante;
+            ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
+            
+            
+            System.out.println ("conectado GRUPO 4");    
+            while (rs.next()) {
+                //Obtener los objetos que necesito para el constructor
+                Partido partido = listapartidos.getPartido(rs.getInt("idPartido"));
+		Equipo equipo = listaequipos.getEquipo(rs.getInt("idEquipo"));
+		// crea el objeto en memoria
+                    Pronostico pronostico = new Pronostico(
+			rs.getInt("idPronostico"), // El id leido de la tabla
+			equipo, // El Equipo que obtuvimos de la lista
+			partido, // El Partido que obtuvimos de la lista
+			// El primer caracter es una comilla delimitadora de campo
+			rs.getString("resultado").charAt(1) // El resultado que leimos de la tabla,
+		);
 
-        int fila = 0;
-
-        try {
-            Scanner sc = new Scanner(new File(this.getPronosticosCSV()));
-            sc.useDelimiter("\n");   //setea el separador de los datos
-
-            while (sc.hasNext()) {
-                // levanta los datos de cada linea
-                datosPronostico = sc.next();
-                // Descomentar si se quiere mostrar cada li­nea lei­da desde el archivo
-                // System.out.println(datosPronostico);  //muestra los datos levantados 
-                fila++;
-                // si es la cabecera la descarto y no se considera para armar el listado
-                if (fila == 1) {
-                    continue;
-                }
-
-                //Proceso auxiliar para convertir los string en vector
-                // guarda en un vector los elementos individuales
-                vectorPronostico = datosPronostico.split(",");
-
-                // graba el equipo en memoria
-                //convertir un string a un entero;
-                int readidPronostico = Integer.parseInt(vectorPronostico[0]);
-                int readidParticipante = Integer.parseInt(vectorPronostico[1]);
-                int readidPartido = Integer.parseInt(vectorPronostico[2]);
-                int readidEquipo = Integer.parseInt(vectorPronostico[3]);
-                char readResultado = vectorPronostico[4].charAt(1);     // El primer caracter es una comilla delimitadora de campo
-                
-                // Obtener los objetos que necesito para el constructor
-                Partido partido = listapartidos.getPartido(readidPartido);
-                Equipo equipo = listaequipos.getEquipo(readidEquipo);
-                // crea el objeto en memoria
-                Pronostico pronostico = new Pronostico(
-                        readidPronostico, // El id leido del archivo
-                        equipo, // El Equipo que obtuvimos de la lista
-                        partido, // El Partido que obtuvimos de la lista
-                        readResultado, // El resultado que leimos del archivo,
-                        readidParticipante //El id leido del archivo
-                );
-
-                // llama al metodo add para grabar el equipo en la lista en memoria
+		// llama al metodo add para grabar el equipo en la lista en memoria
                 this.addPronostico(pronostico);
-
             }
             //closes the scanner
-        } catch (IOException ex) {
-            System.out.println("Mensaje: " + ex.getMessage());
-        }
-    }
+        } catch (SQLException e) {
+                System.out.println("Mensaje: " + e.getMessage());
+        } finally {
+            try {
+                if (com != null) {
+                    com.close();
+                }
+            } catch (SQLException e) {
+                // conn close failed.
+                System.out.println(e.getMessage());
+            }
+        }       
+    }  
 }
