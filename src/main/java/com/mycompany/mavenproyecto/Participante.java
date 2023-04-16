@@ -29,6 +29,10 @@ public class Participante {
         this.pronosticos = new ListaPronosticos();
         this.puntaje = 0;
     }
+
+    Participante(int idParticipante, String nombre) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
     //Getters and Setters

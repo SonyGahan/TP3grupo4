@@ -108,7 +108,7 @@ public class ListaEquipos {
             Statement stmt = com.createStatement();
             
             //String sql;
-            String sql =  "Select";
+            String sql =  "Select * from equipos";
             ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
             
             

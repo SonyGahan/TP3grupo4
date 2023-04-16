@@ -98,24 +98,10 @@ public class ListaParticipantes {
         return lista;
     }
     
-    // cargar desde el archivo
-    public void cargaDeDB() {
-        
-        // para las lineas del archivo csv
-        String datosParticipante;
-        // para los datos individuales de cada linea
-        String vectorParticipante[];
-        // para el objeto en memoria
-        Participante participante;
-        /*
-        int fila = 0;
- 
-        System.out.print("seccion carga de equipos");
-         */
+    // cargar desde la Base de Datos
+    public void cargaDeDB() {     
         
         Connection com=null;
-       
-       
         try { 
             //Establecer la conexion
             com = DriverManager.getConnection("jdbc:sqlite:pronosticos.db" );
@@ -124,22 +110,18 @@ public class ListaParticipantes {
             //String sql;
             String sql =  "Select * from participantes";
             ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
-            
             System.out.println ("conectado GRUPO 4");    
+            
             while (rs.next()) {
-                        System.out.println(rs.getInt("idParticipante") + "\t"
-                        + rs.getString("Nombre") + "\t \t \t"
-                        + rs.getString("Descripcion") + "\t");
-                
-           
+                //levanta los datos de cada fila
+                System.out.println(rs.getInt("idParticipante") + "\t"
+                + rs.getString("Nombre") + "\t \t \t");
                         
                 int idParticipante = rs.getInt("idParticipante") ;
                 String nombre = rs.getString("Nombre");
-                String descripcion = rs.getString("Descripcion");
                 
                 // crea el objeto en memoria
-                participante = new Participante(idParticipante, nombre, puntaje);
-                
+                Participante participante = new Participante(idParticipante, nombre);
                 // llama al metodo add para grabar el equipo en la lista en memoria
                 this.addParticipante(participante);
 

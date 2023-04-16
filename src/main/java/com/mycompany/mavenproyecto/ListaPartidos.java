@@ -100,13 +100,7 @@ public class ListaPartidos {
     
     
     // cargar desde el archivo
-    public void cargaDeDB(
-        int idPartido, // id del ppartido jugado
-        ListaEquipos listaequipos1, // lista de equipos1
-        ListaEquipos listaequipos2, // lista de equipos2
-        int golesEquipo1, //Goles del equipo1
-        int golesEquipo2 //Goles del equipo2
-    ) {
+    public void cargaDeDB() {
         
         Connection com=null;
         try { 
@@ -115,27 +109,20 @@ public class ListaPartidos {
             Statement stmt = com.createStatement();
             
             //String sql;
-            String sql =  "Select";
-                + "idPartido, idEquipo1, idEquipo2, golesEquipo1, golesEquipo2 "
-		+ "FROM partidos "
-		+ "WHERE idPartido = " + idPartido;
+            String sql =  "Select * from partidos";
             ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
-            
-            
            
             System.out.println ("conectado GRUPO 4");    
             while (rs.next()) {
                 //Obtener los objetos que necesito para el constructor
-                Partido partido = listapartidos.getPartido(rs.getInt("idPartido"));
-		Equipo equipo = listaequipos1.getEquipo(rs.getInt("idEquipo"));
+                int rs.getInt("idPartido");
+                int rs.getInt("idEquipo1");
+                int rs.getInt("idEquipo2");
+                int rs.getInt("golesEquipo1");
+                int rs.getInt("golesEquipo2");
+
 		// crea el objeto en memoria
-                    Partido partido = new Partido(
-			rs.getInt("idPartido"), // El id leido de la tabla
-			listaequipos1, // El Equipo que obtuvimos de la lista
-                        listaequipos2, // El Equipo que obtuvimos de la lista    
-                        rs.getInt("golesEquipo1"), // El id leido de la tabla    
-			rs.getInt("golesEquipo2") // El id leido de la tabla    
-		);
+                Partido partido = new Partido(idPartido, idEquipo1, idEquipo2, golesEquipo1, golesEquipo2);
 
 		// llama al metodo add para grabar el equipo en la lista en memoria
                 this.addPartido(partido);
