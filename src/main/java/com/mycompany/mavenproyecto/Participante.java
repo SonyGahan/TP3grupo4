@@ -6,32 +6,25 @@ public class Participante {
     private Integer idParticipante;
     private String nombre;
     private ListaPronosticos pronosticos;
-    private int puntaje;
+    
     
     //Constructor
-    public Participante(Integer idParticipante, String nombre, ListaPronosticos pronosticos, int puntaje) {
+    public Participante(Integer idParticipante, String nombre, ListaPronosticos pronosticos) {
         this.idParticipante = idParticipante;
         this.nombre = nombre;
         this.pronosticos = pronosticos;
-        this.puntaje = puntaje;
     }
     
-    public Participante(Integer idParticipante, String nombre, int puntaje) {
+    public Participante(Integer idParticipante, String nombre) {
         this.idParticipante = idParticipante;
         this.nombre = nombre;
         this.pronosticos = new ListaPronosticos();
-        this.puntaje = puntaje;
     }
 
     public Participante() {
         this.idParticipante = null;
         this.nombre = null;
         this.pronosticos = new ListaPronosticos();
-        this.puntaje = 0;
-    }
-
-    Participante(int idParticipante, String nombre) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     
@@ -60,9 +53,6 @@ public class Participante {
         this.pronosticos = pronosticos;
     }
 
-    public void setPuntaje(int puntaje) {
-        this.puntaje = puntaje;
-    }
     
     // retorna el puntaje del participante calculando los valores de los pronosticos
     public int getPuntaje() {

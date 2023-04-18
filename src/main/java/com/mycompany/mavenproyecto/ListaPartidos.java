@@ -100,7 +100,9 @@ public class ListaPartidos {
     
     
     // cargar desde el archivo
-    public void cargaDeDB() {
+    public void cargaDeDB(
+            ListaEquipos listaequipos
+    ) {
         
         Connection com=null;
         try { 
@@ -109,20 +111,24 @@ public class ListaPartidos {
             Statement stmt = com.createStatement();
             
             //String sql;
-            String sql =  "Select * from partidos";
+            String sql =  "Select "
+                + "idPartido, idEquipo1, idEquipo2, golesEquipo1, golesEquipo2"
+                + "FROM partidos";        
             ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
            
             System.out.println ("conectado GRUPO 4");    
             while (rs.next()) {
                 //Obtener los objetos que necesito para el constructor
-                int rs.getInt("idPartido");
-                int rs.getInt("idEquipo1");
-                int rs.getInt("idEquipo2");
-                int rs.getInt("golesEquipo1");
-                int rs.getInt("golesEquipo2");
-
+                Equipo equipo1 = listaequipos.getEquipo(rs.getInt("idEquipo1"));
+                Equipo equipo2 = listaequipos.getEquipo(rs.getInt("idEquipo2"));
 		// crea el objeto en memoria
-                Partido partido = new Partido(idPartido, idEquipo1, idEquipo2, golesEquipo1, golesEquipo2);
+                Partido partido = new Partido(
+                        rs.getInt("idPartido"),
+                        equipo1,
+                        equipo2,
+                        rs.getInt("golesEquipo1"),
+                        rs.getInt("golesEquipo2")
+                );
 
 		// llama al metodo add para grabar el equipo en la lista en memoria
                 this.addPartido(partido);

@@ -79,6 +79,8 @@ public class Pronostico {
     
     
     public int getPuntaje(){
+        int puntaje = 0;
+        
         if (resultado == resultadoPartido) //No logro definir como traer de la clase Partido la variable, resulPartido con su valor.
             puntaje = 1;
         else 
