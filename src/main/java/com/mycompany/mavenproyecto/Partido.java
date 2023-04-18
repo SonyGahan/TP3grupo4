@@ -73,15 +73,29 @@ public class Partido {
    
     //procedimiento para determinar un resultado segun la cantidad de goles.
     //Este resultado me servira para compararlo con el resultado pronostico de la clase Pronostico.
-    char resulPartido;
-    public void resultadoPartido(){
-        if (golesEquipo1 > golesEquipo2)
-            resulPartido =  'G';
-        else if (golesEquipo1 < golesEquipo2)
-            resulPartido =  'P';
-        else
-            resulPartido =  'E';
+    public char getResultado(Equipo equipo){
+        char resultado = 'X'; //Todavia no se sabe quien gano
+        
+        if(equipo.getNombre().equals(equipo1.getNombre())){
+            if(this.golesEquipo1 > this.golesEquipo2){
+                resultado = 'G';
+            } else if(this.golesEquipo1 < this.golesEquipo2){
+                resultado = 'P';
+            } else{
+                resultado = 'E';
+            }
+        }else if(equipo.getNombre().equals(equipo2.getNombre())){
+            if(this.golesEquipo2 > this.golesEquipo1){
+               resultado = 'G'; 
+            }else if(this.golesEquipo2 < this.golesEquipo1){
+                resultado = 'P';
+            }else{
+                resultado = 'E';
+            }
+        }
+        return resultado;
     }
+    
     
     
     //toString
