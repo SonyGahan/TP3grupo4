@@ -99,7 +99,13 @@ public class ListaEquipos {
     // cargar desde la Base de Datos
     public void cargaDeDB()
     {
-        
+         // para las lineas del archivo csv
+        String datosEquipo;
+        // para los datos individuales de cada linea
+        String vectorEquipo[];
+        // para el objeto en memoria
+        Equipo equipo;
+       
         
         Connection com=null;
         try { 
@@ -108,7 +114,7 @@ public class ListaEquipos {
             Statement stmt = com.createStatement();
             
             //String sql;
-            String sql =  "Select * from equipos";
+            String sql =  "Select idEquipo, Nombre, Descripcion FROM equipos";
             ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
             
             
@@ -125,7 +131,7 @@ public class ListaEquipos {
                 String descripcion = rs.getString("Descripcion");
                 
                 // crea el objeto en memoria
-                Equipo equipo = new Equipo(idEquipo, nombre, descripcion);
+                equipo = new Equipo(idEquipo, nombre, descripcion);
                 
                 // llama al metodo add para grabar el equipo en la lista en memoria
                 this.addEquipo(equipo);

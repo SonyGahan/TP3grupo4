@@ -1,7 +1,7 @@
 package com.mycompany.mavenproyecto;
 
 
-public class Participante {
+public class Participante implements Comparable <Participante> {
     //Atributos
     private Integer idParticipante;
     private String nombre;
@@ -55,7 +55,7 @@ public class Participante {
 
     
     // retorna el puntaje del participante calculando los valores de los pronosticos
-    public int getPuntaje() {
+    public int  getpuntaje() {
         // Para ver el puntaje debo recorrer los pronosticos y ver el puntaje
         // de cada uno y acumularlo. Debo devolver el total.
         int puntaje = 0;
@@ -67,5 +67,32 @@ public class Participante {
             puntaje += p.getPuntaje();
         }
         return puntaje;
-    }  
+    } 
+
+    @Override
+    public String toString() {
+        return "Participante{" + "idParticipante=" + idParticipante + ", nombre=" + nombre + ", pronosticos=" + pronosticos + '}';
+    }
+    
+    //Compara por puntaje
+    @Override
+    public int compareTo(Participante p){
+        //devuelve -1 si es menor, 0 si es igual 1 es mayor
+        int miPuntaje = this.getPuntaje();
+        int otroPuntaje = p.getPuntaje();
+        
+        if (miPuntaje == otroPuntaje)
+            return 0;
+        else if (miPuntaje > otroPuntaje)
+            return 1;
+        else
+            return -1;
+        
+    }
+    
+    void cargarPronosticos (ListaEquipos equipos, ListaPartidos partidos) {
+        this.pronosticos.cargarDeDB(
+            this.getParticipante(), 
+            equipos, partidos);
+    }
 }

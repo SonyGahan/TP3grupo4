@@ -1,7 +1,7 @@
 package com.mycompany.mavenproyecto;
 
 
-public class Pronostico {
+public class Pronostico{
     //Atributos
     private int idPronostico;
     private Equipo equipo;
@@ -12,7 +12,6 @@ public class Pronostico {
     //Metodos
     
     //Constructor
-
     public Pronostico(int idPronostico, Equipo equipo, Partido partido, char resultado) {
         this.idPronostico = idPronostico;
         this.equipo = equipo;
@@ -62,20 +61,18 @@ public class Pronostico {
     }
     
     //ToString
-
     @Override
     public String toString() {
         return "Pronostico{" + "idPronostico=" + idPronostico + ", equipo=" + equipo + ", partido=" + partido + ", resultado=" + resultado + '}';
     }
-    
-    
+       
     
     // Metodo que devuelve 0 o 1 segun haya coincidencia o no, entre el resultado apostado y el resultado real del partido
     // Si hay coincidencia hay 1 punto en esa apuesta, sino hay 0 puntos.
     // Cada pronostico es una "apuesta" a que en un Partido determinado sale un cierto resultado (Gana, Pierde, Empata)
     //Tengo que poder comparar el resultado del pronostico con el resultado del partido.
     //Si coinciden guardo el valor 1, que se usara en el contador de la clase Prticipante, para calcular el valor total del puntaje. 
-    public int getPuntaje(){
+    /*public int getPuntaje(){
         char res = pronostico.resultado; //una letra
         equipo = pronostico.getEquipo(); //nombre de equipo
         char res_partido = pronostico.getPartido().getResultado(equipo); // una letra
@@ -87,4 +84,5 @@ public class Pronostico {
             puntaje += 0;
         }
     }
+    */
 }

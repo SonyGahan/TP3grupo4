@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -98,8 +99,30 @@ public class ListaParticipantes {
         return lista;
     }
     
+    //Short para ordenar la lista
+    public List <Participante> getOrdenadosPorPuntaje(){
+        List <Participante> ordenados = new ArrayList <Participante>();
+        ordenados.addAll(participantes);
+        
+        //Lista ordenada de menor a mayor
+        Collections.sort(ordenados, Collections.reverseOrder() );
+        return ordenados;
+    }   
+    
+    //Ordenar por Puntajes
+    public String listarOrdenadosPorPuntaje (){
+        List<Participante> ordenados = this.getOrdenadosPorPuntaje();
+        String lista="";
+        for (Participante participantes: ordenados){
+            lista += "\n"+ participantes;
+            
+        }
+        return lista;
+    }
+    
+    
     // cargar desde la Base de Datos
-    public void cargaDeDB() {     
+    public void cargaDeDB(int idParticipante, ListaEquipos listaequipos, ListaPartidos listapartidos) {     
         
         Connection com=null;
         try { 
@@ -108,22 +131,29 @@ public class ListaParticipantes {
             Statement stmt = com.createStatement();
             
             //String sql;
-            String sql =  "Select * from participantes";
-            ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado
+            String sql =  "Select "
+                    +"idPronostico, idParticipante, idPartido, idEquipo, resultado"
+                    +"from pronosticos"
+                    + "where idParticipante = " + idParticipante;
+            
+            ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado  
             System.out.println ("conectado GRUPO 4");    
             
             while (rs.next()) {
-                //levanta los datos de cada fila
-                System.out.println(rs.getInt("idParticipante") + "\t"
-                + rs.getString("Nombre") + "\t \t \t");
-                        
-                int idParticipante = rs.getInt("idParticipante") ;
-                String nombre = rs.getString("Nombre");
+                // Obtener los objetos que necesito para el constructor
+                Partido partido= listapartidos.getPartido (rs.getInt("idPartido"));
+                Equipo equipo=listaequipos.getEquipo(rs.getInt("idEquipo"));
                 
                 // crea el objeto en memoria
-                Participante participante = new Participante(idParticipante, nombre);
+                Pronostico pronostico = new Pronostico(
+                        rs.getInt("idPronostico"), // El id leido de la tabla
+                        equipo, // El Equipo que obtuvimos de la lista
+                        partido, // El Partido que obtuvimos de la lista
+                        rs.getString("resultado").charAt(0) // El resultado que leimos de la tabla,
+                );
+                
                 // llama al metodo add para grabar el equipo en la lista en memoria
-                this.addParticipante(participante);
+                this.addPronostico(pronostico);
 
             }
             //closes the scanner
@@ -140,4 +170,8 @@ public class ListaParticipantes {
             }
         }       
     }    
+
+    private void addPronostico(Pronostico pronostico) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
