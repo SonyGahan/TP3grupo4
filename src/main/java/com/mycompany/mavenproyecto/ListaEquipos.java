@@ -97,13 +97,7 @@ public class ListaEquipos {
     }
     
     // cargar desde la Base de Datos
-    public void cargaDeDB()
-    {
-         // para las lineas del archivo csv
-        String datosEquipo;
-        // para los datos individuales de cada linea
-        String vectorEquipo[];
-        // para el objeto en memoria
+    public void cargaDeDB(){
         Equipo equipo;
        
         

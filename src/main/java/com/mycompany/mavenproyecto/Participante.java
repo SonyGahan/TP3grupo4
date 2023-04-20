@@ -55,7 +55,7 @@ public class Participante implements Comparable <Participante> {
 
     
     // retorna el puntaje del participante calculando los valores de los pronosticos
-    public int  getpuntaje() {
+    public int  getPuntaje() {
         // Para ver el puntaje debo recorrer los pronosticos y ver el puntaje
         // de cada uno y acumularlo. Debo devolver el total.
         int puntaje = 0;
@@ -91,8 +91,8 @@ public class Participante implements Comparable <Participante> {
     }
     
     void cargarPronosticos (ListaEquipos equipos, ListaPartidos partidos) {
-        this.pronosticos.cargarDeDB(
-            this.getParticipante(), 
+        this.pronosticos.cargaDeDB(
+            this.getIdParticipante(), 
             equipos, partidos);
     }
 }

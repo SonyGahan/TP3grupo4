@@ -122,7 +122,7 @@ public class ListaParticipantes {
     
     
     // cargar desde la Base de Datos
-    public void cargaDeDB(int idParticipante, ListaEquipos listaequipos, ListaPartidos listapartidos) {     
+    public void cargaDeDB() {     
         
         Connection com=null;
         try { 
@@ -132,28 +132,17 @@ public class ListaParticipantes {
             
             //String sql;
             String sql =  "Select "
-                    +"idPronostico, idParticipante, idPartido, idEquipo, resultado"
-                    +"from pronosticos"
-                    + "where idParticipante = " + idParticipante;
+                    +"idParticipante, nombre"
+                    +"from participantes";
             
             ResultSet rs = stmt.executeQuery(sql); //Ejecutar la consulta y obtener resultado  
             System.out.println ("conectado GRUPO 4");    
             
             while (rs.next()) {
                 // Obtener los objetos que necesito para el constructor
-                Partido partido= listapartidos.getPartido (rs.getInt("idPartido"));
-                Equipo equipo=listaequipos.getEquipo(rs.getInt("idEquipo"));
-                
-                // crea el objeto en memoria
-                Pronostico pronostico = new Pronostico(
-                        rs.getInt("idPronostico"), // El id leido de la tabla
-                        equipo, // El Equipo que obtuvimos de la lista
-                        partido, // El Partido que obtuvimos de la lista
-                        rs.getString("resultado").charAt(0) // El resultado que leimos de la tabla,
-                );
-                
-                // llama al metodo add para grabar el equipo en la lista en memoria
-                this.addPronostico(pronostico);
+                Participante participante= new Participante (rs.getInt("idParticipante"), rs.getString("nombre") );
+                // llama al metodo para grabar el equipo en la lista en memoria
+                this.addParticipante(participante);
 
             }
             //closes the scanner

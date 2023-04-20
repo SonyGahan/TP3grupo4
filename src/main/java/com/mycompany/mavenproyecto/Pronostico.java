@@ -72,10 +72,9 @@ public class Pronostico{
     // Cada pronostico es una "apuesta" a que en un Partido determinado sale un cierto resultado (Gana, Pierde, Empata)
     //Tengo que poder comparar el resultado del pronostico con el resultado del partido.
     //Si coinciden guardo el valor 1, que se usara en el contador de la clase Prticipante, para calcular el valor total del puntaje. 
-    /*public int getPuntaje(){
-        char res = pronostico.resultado; //una letra
-        equipo = pronostico.getEquipo(); //nombre de equipo
-        char res_partido = pronostico.getPartido().getResultado(equipo); // una letra
+    public int getPuntaje(){
+        char res = this.resultado; //una letra
+        char res_partido = this.getPartido().getResultado(this.equipo); // una letra
         int puntaje = 0;
         
         if (res == res_partido){ //No logro definir como traer de la clase Partido la variable, resulPartido con su valor.
@@ -83,6 +82,7 @@ public class Pronostico{
         }else{
             puntaje += 0;
         }
+        return 0;
     }
-    */
+    
 }
